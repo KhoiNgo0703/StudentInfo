@@ -1,0 +1,56 @@
+﻿@model StudentPicMVC.Models.DTO.RegisterationRequestDTO
+
+@* change the title *@
+@{
+    ViewBag.Title = "Sign Up-";
+}
+
+
+<!----------------------- Main Container -------------------------->
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <!----------------------- Login Container -------------------------->
+    <div class="row border rounded-5 p-3 bg-white shadow box-area">
+        <!--------------------------- Left Box ----------------------------->
+        <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box" style="background: #a5a58d;">
+            <div class="featured-image mb-3">
+                <img src="~/images/register/register1.jpg" class="img-fluid rounded-4" style="width: 200px;">
+            </div>            
+            <small class="text-white text-wrap text-center" style="width: 17rem;font-family: 'Courier New', Courier, monospace;">Let us take care your data</small>
+        </div>
+        <!-------------------- ------ Right Box ---------------------------->
+
+        <form class="col-md-6 right-box" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="row align-items-center">
+                <div class="header-text mb-4">
+                    <h2>Sign Up</h2>
+                    <p>We are happy to have you as a friend and a customer.</p>
+                </div>
+                <div class="input-group mb-3">
+                    <input asp-for="UserName" type="text" class="form-control form-control-lg bg-light fs-6" placeholder="User Name">
+                </div>
+                <div class="input-group mb-3">
+                    <input asp-for="Name" type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Name">
+                </div>
+                <div class="input-group mb-3">
+                    <input input asp-for="Password" type="password" class="form-control form-control-lg bg-light fs-6" placeholder="Password">
+                </div>   
+                <div class="input-group mb-3" style="width: 50%;">
+                    <select asp-for="Role" class="form-select" asp-items="@ViewBag.RoleList">
+                        <option disabled selected>--Select Role--</option>
+                    </select>
+                </div>
+                <div class="input-group mb-3" style="padding-top:10px">
+                    <button type="submit" value="Submit" class="btn btn-lg btn-primary w-100 fs-6">Sign Up</button>
+                </div>                                
+            </div>
+        </form>
+    </div>
+</div>
+
+@* import css *@
+<link rel="stylesheet" href="~/css/register/Register.css" type="text/css" />
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

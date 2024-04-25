@@ -1,0 +1,78 @@
+﻿@model StudentPicMVC.Models.VM.StudentVM
+<br />
+
+@* Web Title *@
+@{
+	ViewBag.Title = "Student Info-";
+}
+
+<div class="container- p-4 border">
+    <div class="row pb-2">
+        <div class="col">
+            <h1 class="text-primary">Student List</h1>
+        </div>
+        <div class="col text-end pt-1">
+            <a class="btn btn-outline-primary" asp-controller="Student" asp-action="CreateStudent"><i class="bi bi-table"></i> Create new student info</a>
+        </div>
+    </div>
+
+    <table id="studentTable" class="table table-striped " style="width:80%" >
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>  
+                <th>Age</th>
+                <th>Class</th>
+                <th>Portrait</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>            
+            @foreach (var item in Model.StudentList)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Name</td>
+                    <td>@item.Age</td>
+                    <td>@item.Class</td>
+                    @if (!string.IsNullOrEmpty(item.ImageB64))
+                    {
+                        <td><img src="@item.ImageB64.ToString()" alt="preview image" width="32px" height="32px" /></td>
+                    }
+                    else
+                    {
+                        <td>No image available</td>
+                    }
+                    <td class="text-center">
+                        <a asp-controller="Student" asp-action="UpdateStudent" asp-route-Id="@item.Id" class="btn btn-success"><i class="bi bi-pencil-square"></i></a>
+                        <a asp-controller="Student" asp-action="DeleteStudent" asp-route-Id="@item.Id" class="btn btn-danger"><i class="bi bi-journal-x"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Class</th>
+                <th>Portrait</th>
+                <th></th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+@* Table script and css of datatable *@
+@* css *@
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css" rel="stylesheet" />
+
+@section scripts {
+    <!-- Reference the external JavaScript file -->
+    <script src="~/js/Table/TableScript.js"></script>
+    <!-- Call the initializeDataTable function with the parameter -->
+    <script>
+        initializeDataTable('#studentTable');
+    </script>
+}

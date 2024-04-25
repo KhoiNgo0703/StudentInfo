@@ -1,0 +1,159 @@
+﻿@model StudentPicMVC.Models.VM.StudentCreateVM
+
+@* Web Title *@
+@{
+    ViewBag.Title = "Create Student-";
+}
+
+<form asp-action="CreateStudent">
+    <br />
+    <div class="container border p-3">
+        <h1 class="text-primary">Create Student Info</h1>
+        <hr />
+        <div class="row">
+            <div class="col-10">
+                <div class="row">
+                    @* validation check *@
+                    <div asp-validation-summary="All" class="text-danger"></div>
+
+                    @* Student Name *@
+                    <div class="col-2">
+                        <label asp-for="Student.Name" class="control-label pt-2" style="font-size:15px;"></label>
+                    </div>
+                    <div class="col-10 pb-3">
+                        <input asp-for="Student.Name" class="form-control" />
+                        <span asp-validation-for="Student.Name" class="text-danger"></span>
+                    </div>
+
+                    @* Student Age *@
+                    <div class="col-2">
+                        <label asp-for="Student.Age" class="control-label pt-2" style="font-size:15px;"></label>
+                    </div>
+                    <div class="col-10 pb-3">
+                        <input asp-for="Student.Age" class="form-control" />
+                        <span asp-validation-for="Student.Age" class="text-danger"></span>
+                    </div>
+
+                    @* Student Class *@
+                    <div class="col-2">
+                        <label asp-for="Student.Class" class="control-label pt-2" style="font-size:15px;"></label>
+                    </div>
+                    <div class="col-10 pb-3">
+                        <input asp-for="Student.Class" class="form-control" />
+                        <span asp-validation-for="Student.Class" class="text-danger"></span>
+                    </div>
+
+                    @* Student Portrait *@
+                    <div class="col-2">
+                        <label asp-for="Student.ImageB64" class="control-label pt-2" style="font-size:15px;"></label>
+                    </div>
+                    <div class="col-10 pb-3">
+                        <textarea asp-for="Student.ImageB64" disabled class="form-control" rows="2" id="b64String"></textarea>
+                        <span asp-validation-for="Student.ImageB64" class="text-danger"></span>
+                        <div class="row" style="padding-top:3px;">
+                            <div>Upload Image: </div>
+                            <div>
+                                <input type="file" id="imageInput" accept=".jpg,.jpeg,.png">
+                                <div id="progress" style="display:none;">
+                                    Loading...
+                                </div>
+                            </div>
+                            <div>
+                                <p><span id="fileSize"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                    @* Back Button *@
+                    <div class="col-5 offset-2">
+                        <a asp-action="IndexStudent" asp-controller="Student" class="btn-primary btn form-control">Back to the list</a>
+                    </div>
+
+                    @* Create Button *@
+                    <div class="col-5 ">
+                        <input type="submit" value="Create" class="btn btn-success form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-2">
+                    <img id="imagePreview" src="" alt="Preview Image" width="170px" height="256px" />
+            </div>
+        </div>        
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const imageInput = document.getElementById('imageInput');
+            const imagePreview = document.getElementById('imagePreview');
+            const progressDiv = document.getElementById('progress');
+            const fileSizeSpan = document.getElementById('fileSize');
+            const b64string = document.getElementById('b64String');
+
+            imageInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+
+                if (file) {
+                    // Display progress
+                    progressDiv.style.display = 'block';
+
+                    // Use Promise to handle file reading
+                    const readImage = new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+
+                        // Check file type and size before reading it
+                        if (!file.type.startsWith('image/')) {
+                            reject(new Error('Selected file is not an image.'));
+                            return;
+                        }
+
+                        if (file.size > 1000000) { // 1 MB in bytes
+                            reject(new Error('Image size exceeds 1 MB.'));
+                            return;
+                        }
+
+                        reader.onload = function (event) {
+                            const img = new Image();
+                            img.onload = function () {
+                                resolve(img);
+                            };
+                            img.src = event.target.result;
+                        };
+
+                        reader.onprogress = function (event) {
+                            if (event.lengthComputable) {
+                                const percentLoaded = Math.round((event.loaded / event.total) * 100);
+                                progressDiv.textContent = `Loading: ${percentLoaded}% v`;
+                            }
+                        };
+
+                        reader.onerror = function () {
+                            reject(new Error('Error reading the file.'));
+                        };
+
+                        reader.readAsDataURL(file);
+                    });
+
+                    // Using async/await to handle the promise
+                    (async function () {
+                        try {
+                            const img = await readImage;
+                            imagePreview.src = img.src;
+                            progressDiv.style.display = 'none'; // Hide progress                            
+                            fileSizeSpan.textContent = `File Size: ${(file.size / 1024).toFixed(2)} KB`; // Display file size
+                            b64string.textContent = img.src;
+                        } catch (error) {
+                            imagePreview.src = null;
+                            progressDiv.textContent = error.message; // Change error to ex
+                            progressDiv.style.color = 'red'; // Set error message color to red
+                            fileSizeSpan.textContent=''
+                            b64string.textContent = null;
+                        }
+                    })();
+                }
+            });
+        });
+    </script>
+}

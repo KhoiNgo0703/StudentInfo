@@ -1,0 +1,158 @@
+﻿@using Student_Utility
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Koy Sinfo</title>
+    @* booswatch theme *@
+    <link rel="stylesheet" href="~/css/Theme/BootswatchTheme.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/StudentPicMVC.styles.css" asp-append-version="true" />
+    @* bootstrap icon *@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    @* bootstrap  *@
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+    @* sweetalert2 notification *@
+    <partial name="_Notification" />
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm  border-bottom box-shadow mb-3" style="background-color:#ee964b">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index"><img src="~/logo/mainlogo.png" alt="IconHome" width="32" height="32" />Koy Sinfo</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">  
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                @if (User.IsInRole(SD.Admin))
+                                {
+                                    <span>Content Management (Admin) </span>
+                                }
+                                else
+                                {
+                                    <span>Info Table</span>
+                                }
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="" asp-action="">Teacher Info</a></li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Student" asp-action="IndexStudent">Student Info</a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                            </ul>
+                        </li>                        
+                    </ul>
+                    <ul class="navbar-nav d-flex justify-content-center align-items-center flex-grow-1">
+                        <form class="d-flex" role="search">
+                            <input class="form-control me-3" type="search" placeholder="Search" aria-label="Search" style="width: 400px;">
+                            @*  <button class="btn btn-outline-secondary" type="submit">Search</button> *@
+                        </form>
+                    </ul>
+                    <ul class="navbar-nav">
+                        @* Use IHttpContextAccessor to check token to toggle login and logout *@
+                        @* @if (httpAcc.HttpContext.Session.GetString(SD.AccessToken) != null && httpAcc.HttpContext.Session.GetString(SD.AccessToken).ToString().Length > 0) *@
+                        @*   Use Identity Authenticated to check  *@
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Hello, @User.Identity.Name</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Auth" asp-action="Logout">Logout</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Auth" asp-action="Login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Auth" asp-action="Register">Register</a>
+                            </li>
+                        }
+                    </ul>
+                    @* toggleswitch for background *@
+                    <ul class="navbar-nav p-2 border rounded">
+                        <div class="form-check form-switch" id="btnSwitch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" />
+                        </div>
+                    </ul>                    
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @* bootstrap *@
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    @* dataTable *@
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.bootstrap5.js"></script>
+    @* sweetalert2 noti *@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @*toggleSwtich for background and save the state in a cookie *@
+    <script>
+        // Function to set a cookie with the specified name, value, and expiration date
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+        // Function to get the value of a cookie by name
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i];
+                while (cookie.charAt(0) == ' ') {
+                    cookie = cookie.substring(1, cookie.length);
+                }
+                if (cookie.indexOf(nameEQ) == 0) {
+                    return cookie.substring(nameEQ.length, cookie.length);
+                }
+            }
+            return null;
+        }
+        //toggle the background switch
+        document.getElementById("btnSwitch").addEventListener('click', () => {
+            var currentColor;
+            if (document.documentElement.getAttribute('data-bs-theme') == 'dark') {
+                // document.documentElement.setAttribute('data-bs-theme', 'light');
+                currentColor = 'light';
+            }
+            else {
+                // document.documentElement.setAttribute('data-bs-theme', 'dark');
+                currentColor = 'dark';
+            }
+            setCookie('backgroundTheme', currentColor, 30);
+            document.documentElement.setAttribute('data-bs-theme', currentColor);
+        })
+
+        //get the color for the background theme
+        var storedColor = getCookie('backgroundTheme');
+        //select the html element
+        var htmlElement = document.querySelector('html');
+        htmlElement.setAttribute('data-bs-theme', storedColor);
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
